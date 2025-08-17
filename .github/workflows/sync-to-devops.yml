@@ -1,0 +1,24 @@
+name: Sync to Azure DevOps
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ secrets.AZURE_DEVOPS_USERNAME }}"
+          git config --global user.email "${{ secrets.AZURE_DEVOPS_EMAIL }}"
+
+      - name: Push to Azure DevOps
+        run: |
+          git remote add azure https://${{ secrets.AZURE_DEVOPS_USERNAME }}:${{ secrets.AZURE_DEVOPS_PAT }}@${{ secrets.AZURE_DEVOPS_REPO }}
+          git push azure --mirror
